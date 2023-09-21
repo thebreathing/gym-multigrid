@@ -15,7 +15,7 @@ class MultiGridEnv(gymnasium.Env):
     2D grid world game environment
     """
 
-    metadata = {"render_modes": ["human"], "render_fps": 10}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
 
     # Enumeration of possible actions
 
