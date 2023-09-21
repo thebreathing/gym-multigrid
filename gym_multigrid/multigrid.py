@@ -512,11 +512,21 @@ class MultiGridEnv(gymnasium.Env):
 
             bg = pygame.transform.smoothscale(bg, (self.screen_width, self.screen_height))
 
-            font_size = 22
-            text = f"Time: {self.step_count}/{self.max_steps} steps"
+            font_size = 18
+
+            # fps
+            text = f"FPS: {self.clock.get_fps():.2f}"
             font = pygame.freetype.SysFont(pygame.font.get_default_font(), font_size)
             text_rect = font.get_rect(text, size=font_size)
-            text_rect.center = bg.get_rect().center
+            text_rect.x = bg.get_width() - text_rect.width - font_size
+            text_rect.y = bg.get_height() - font_size * 1.5
+            font.render_to(bg, text_rect, text, size=font_size)
+
+            # render mode
+            text = f"render_mode: {self.render_mode}"
+            font = pygame.freetype.SysFont(pygame.font.get_default_font(), font_size)
+            text_rect = font.get_rect(text, size=font_size)
+            text_rect.x = font_size
             text_rect.y = bg.get_height() - font_size * 1.5
             font.render_to(bg, text_rect, text, size=font_size)
 
