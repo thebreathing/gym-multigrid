@@ -95,8 +95,8 @@ class MultiGridEnv(gymnasium.Env):
         # rendering
         self.render_mode = render_mode
         self.screen_size = screen_size
-        self.screen_width = self.screen_size
-        self.screen_height = self.screen_size
+        self.screen_width = self.screen_size / max(width, height) * width
+        self.screen_height = self.screen_size / max(width, height) * height
         self.render_size = None
         self.highlight = highlight
         self.tile_size = tile_size
@@ -510,15 +510,15 @@ class MultiGridEnv(gymnasium.Env):
             bg.fill((255, 255, 255))
             bg.blit(surf, (offset / 2, 0))
 
-            bg = pygame.transform.smoothscale(bg, (self.screen_size, self.screen_size))
+            bg = pygame.transform.smoothscale(bg, (self.screen_width, self.screen_height))
 
             font_size = 22
-            # text = self.mission
-            # font = pygame.freetype.SysFont(pygame.font.get_default_font(), font_size)
-            # text_rect = font.get_rect(text, size=font_size)
-            # text_rect.center = bg.get_rect().center
-            # text_rect.y = bg.get_height() - font_size * 1.5
-            # font.render_to(bg, text_rect, text, size=font_size)
+            text = f"Time: {self.step_count}/{self.max_steps} steps"
+            font = pygame.freetype.SysFont(pygame.font.get_default_font(), font_size)
+            text_rect = font.get_rect(text, size=font_size)
+            text_rect.center = bg.get_rect().center
+            text_rect.y = bg.get_height() - font_size * 1.5
+            font.render_to(bg, text_rect, text, size=font_size)
 
             self.window.blit(bg, (0, 0))
             pygame.event.pump()
