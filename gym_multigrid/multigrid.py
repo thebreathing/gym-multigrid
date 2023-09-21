@@ -31,7 +31,7 @@ class MultiGridEnv(gymnasium.Env):
         agent_view_size=7,
         actions_set=Actions,
         objects_set=None,
-        highlight: bool = True,
+        highlight: bool = False,
         tile_size: int = TILE_PIXELS,
         agent_pov: bool = False,
         render_mode=None,
