@@ -343,7 +343,6 @@ class MultiGridEnv(gymnasium.Env):
         return obs_cell is not None and obs_cell.type == world_cell.type
 
     def step(self, actions):
-        print("CIAOOOOOOOOOOOOOOOOOO")
         self.step_count += 1
 
         order = np.random.permutation(len(actions))
