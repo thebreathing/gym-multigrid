@@ -152,13 +152,21 @@ class MultiGridEnv(gymnasium.Env):
         assert False, "_gen_grid needs to be implemented by each environment"
 
     def _handle_pickup(self, i, rewards, fwd_pos, fwd_cell):
-        pass
+        if fwd_cell and fwd_cell.can_pickup():
+            if self.agents[i].carrying is None:
+                self.agents[i].carrying = fwd_cell
+                self.agents[i].carrying.cur_pos = np.array([-1, -1])
+                self.grid.set(fwd_pos[0], fwd_pos[1], None)
+
 
     def _handle_build(self, i, rewards, fwd_pos, fwd_cell):
         pass
 
     def _handle_drop(self, i, rewards, fwd_pos, fwd_cell):
-        pass
+        if not fwd_cell and self.agents[i].carrying:
+            self.grid.set(fwd_pos[0], fwd_pos[1], self.agents[i].carrying)
+            self.agents[i].carrying.cur_pos = fwd_pos
+            self.agents[i].carrying = None
 
     def _handle_special_moves(self, i, rewards, fwd_pos, fwd_cell):
         pass
@@ -335,6 +343,7 @@ class MultiGridEnv(gymnasium.Env):
         return obs_cell is not None and obs_cell.type == world_cell.type
 
     def step(self, actions):
+        print("CIAOOOOOOOOOOOOOOOOOO")
         self.step_count += 1
 
         order = np.random.permutation(len(actions))
@@ -371,14 +380,23 @@ class MultiGridEnv(gymnasium.Env):
             elif actions[i] == self.actions.forward:
                 if fwd_cell is not None:
                     # check if the agent is entering its own goal
-                    if fwd_cell.type == "goal" and fwd_cell.color == self.agents[i].color:
-                        done = True
-                        rewards[i] += self._reward(i, rewards, 1)
+                    if fwd_cell.type == "goal":
+                        if fwd_cell.color == self.agents[i].color:
+                            done = True
+                            rewards[i] += self._reward(i, rewards, 1)
+                        elif fwd_cell.can_overlap():
+                            #self.grid.set(*fwd_pos, self.agents[i])
+                            self.grid.set(*self.agents[i].pos, None)
+                            self.agents[i].pos = fwd_pos
                     elif fwd_cell.type == "switch":
                         self._handle_switch(i, rewards, fwd_pos, fwd_cell)
+                    elif fwd_cell.type == "door" and fwd_cell.can_overlap():
+                        self.grid.set(*self.agents[i].pos, None)
+                        self.agents[i].pos = fwd_pos
                 elif fwd_cell is None or fwd_cell.can_overlap():
                     self.grid.set(*fwd_pos, self.agents[i])
-                    self.grid.set(*self.agents[i].pos, None)
+                    if not (self.grid.get(*self.agents[i].pos) is not None and self.grid.get(*self.agents[i].pos).type == "goal"):
+                        self.grid.set(*self.agents[i].pos, None)
                     self.agents[i].pos = fwd_pos
                 self._handle_special_moves(i, rewards, fwd_pos, fwd_cell)
 
@@ -396,7 +414,7 @@ class MultiGridEnv(gymnasium.Env):
             # Toggle/activate an object
             elif actions[i] == self.actions.toggle:
                 if fwd_cell:
-                    fwd_cell.toggle(self, fwd_pos)
+                    fwd_cell.toggle(self, i, fwd_pos)
 
             # Done action (not used by default)
             elif actions[i] == self.actions.done:

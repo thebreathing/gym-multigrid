@@ -136,7 +136,7 @@ class WorldObj:
         """Can the agent see behind this object?"""
         return True
 
-    def toggle(self, env, pos):
+    def toggle(self, env, i, pos):
         """Method to trigger/toggle an action this object performs"""
         return False
 
@@ -275,10 +275,10 @@ class Door(WorldObj):
     def see_behind(self):
         return self.is_open
 
-    def toggle(self, env, pos):
+    def toggle(self, env, i, pos):
         # If the player has the right key to open the door
         if self.is_locked:
-            if isinstance(env.carrying, Key) and env.carrying.color == self.color:
+            if isinstance(env.agents[i].carrying, Key) and env.agents[i].carrying.color == self.color:
                 self.is_locked = False
                 self.is_open = True
                 return True
@@ -385,7 +385,7 @@ class Box(WorldObj):
         # Horizontal slit
         fill_coords(img, point_in_rect(0.16, 0.84, 0.47, 0.53), c)
 
-    def toggle(self, env, pos):
+    def toggle(self, env, i, pos):
         # Replace the box by its contents
         env.grid.set(*pos, self.contains)
         return True
