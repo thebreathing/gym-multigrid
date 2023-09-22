@@ -26,6 +26,23 @@ class Actions:
     # Done completing task
     done = 7
 
+class MediumActions:
+    available = [
+        "still",
+        "left",
+        "right",
+        "forward",
+        "pickup",
+        "toggle",
+    ]
+
+    still = 0       # no action
+    left = 1        # turn left
+    right = 2       # turn right
+    forward = 3     # move forward
+    pickup = 4      # pick up an object
+    toggle = 5      # toggle/activate an object
+
 
 class SmallActions:
     available = ["still", "left", "right", "forward"]
