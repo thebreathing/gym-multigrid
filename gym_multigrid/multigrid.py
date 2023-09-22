@@ -370,7 +370,8 @@ class MultiGridEnv(gymnasium.Env):
             # Move forward
             elif actions[i] == self.actions.forward:
                 if fwd_cell is not None:
-                    if fwd_cell.type == "goal":
+                    # check if the agent is entering its own goal
+                    if fwd_cell.type == "goal" and fwd_cell.color == self.agents[i].color:
                         done = True
                         rewards[i] += self._reward(i, rewards, 1)
                     elif fwd_cell.type == "switch":
