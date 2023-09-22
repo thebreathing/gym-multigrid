@@ -561,6 +561,7 @@ class MultiGridEnv(gymnasium.Env):
         highlight: bool = True,
         tile_size: int = TILE_PIXELS,
         agent_pov: bool = False,
+        hide_obj_types: list[str] = [],
     ):
         """Returns an RGB image corresponding to the whole environment or the agent's point of view.
 
@@ -577,11 +578,11 @@ class MultiGridEnv(gymnasium.Env):
         """
 
         if agent_pov:
-            return self.get_pov_render(tile_size)
+            return self.get_pov_render(tile_size, hide_obj_types)
         else:
-            return self.get_full_render(highlight, tile_size)
+            return self.get_full_render(highlight, tile_size, hide_obj_types)
 
-    def get_pov_render(self, tile_size):
+    def get_pov_render(self, tile_size, hide_obj_types):
         """
         Render an agent's POV observation for visualization
         """
@@ -597,7 +598,7 @@ class MultiGridEnv(gymnasium.Env):
 
         return img
 
-    def get_full_render(self, highlight, tile_size):
+    def get_full_render(self, highlight, tile_size, hide_obj_types):
         """
         Render a non-paratial observation for visualization
         """
@@ -642,6 +643,7 @@ class MultiGridEnv(gymnasium.Env):
             agent_pos=self.agents[0].pos,
             agent_dir=self.agents[0].dir,
             highlight_mask=highlight_mask if highlight else None,
+            hide_obj_types=hide_obj_types
         )
 
         return img

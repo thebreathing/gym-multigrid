@@ -737,6 +737,7 @@ class Grid:
         agent_pos: tuple[int, int],
         agent_dir: int | None = None,
         highlight_mask: np.ndarray | None = None,
+        hide_obj_types: list[str] = [],
     ) -> np.ndarray:
         """
         Render this grid at a given scale
@@ -757,6 +758,9 @@ class Grid:
         for j in range(0, self.height):
             for i in range(0, self.width):
                 cell = self.get(i, j)
+
+                if cell and cell.type in hide_obj_types:
+                    cell = None
 
                 agent_here = np.array_equal(agent_pos, (i, j))
                 assert highlight_mask is not None
