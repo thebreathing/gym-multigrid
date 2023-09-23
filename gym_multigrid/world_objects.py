@@ -193,7 +193,7 @@ class Goal(WorldObj):
         return True
 
     def render(self, img):
-        fill_coords(img, point_in_rect(0, 1, 0, 1), COLORS[self.color])
+        fill_coords(img, point_in_rect(0, 1, 0, 1), COLORS[self.color] * 0.5)
 
 
 class Switch(WorldObj):

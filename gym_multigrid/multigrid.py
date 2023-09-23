@@ -386,7 +386,7 @@ class MultiGridEnv(gymnasium.Env):
                         if fwd_cell.color == self.agents[i].color:
                             done = True
                             rewards[i] += self._reward(i, rewards, 1)
-                        elif fwd_cell.can_overlap():
+                        if fwd_cell.can_overlap():
                             #self.grid.set(*fwd_pos, self.agents[i])
                             self.grid.set(*self.agents[i].pos, None)
                             self.agents[i].pos = fwd_pos
