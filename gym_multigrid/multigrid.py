@@ -2,12 +2,12 @@ import gymnasium
 import pygame
 from gymnasium.utils import seeding
 
-from gym_multigrid.actions import Actions
+from gym_multigrid.actions import Actions, MediumActions
 from gym_multigrid.rendering import *
 from gym_multigrid.window import Window
 import numpy as np
 
-from gym_multigrid.world_objects import Grid, COLOR_NAMES, TILE_PIXELS, World
+from gym_multigrid.world_objects import Grid, COLOR_NAMES, TILE_PIXELS, World, Door
 
 
 class MultiGridEnv(gymnasium.Env):
@@ -29,7 +29,7 @@ class MultiGridEnv(gymnasium.Env):
         agents=None,
         partial_obs=True,
         agent_view_size=7,
-        actions_set=Actions,
+        actions_set=MediumActions,
         objects_set=None,
         highlight: bool = False,
         tile_size: int = TILE_PIXELS,
@@ -112,6 +112,9 @@ class MultiGridEnv(gymnasium.Env):
         # To keep the same grid for each episode, call env.seed() with
         # the same seed before calling env.reset()
         self._gen_grid(self.width, self.height)
+
+        # check existance 1 door
+        assert any([isinstance(o, Door) for o in self.grid.grid]), "No door in the grid"
 
         # These fields should be defined by _gen_grid
         for a in self.agents:
@@ -394,7 +397,7 @@ class MultiGridEnv(gymnasium.Env):
                         self.agents[i].pos = fwd_pos
                 elif fwd_cell is None or fwd_cell.can_overlap():
                     self.grid.set(*fwd_pos, self.agents[i])
-                    if not (self.grid.get(*self.agents[i].pos) is not None and self.grid.get(*self.agents[i].pos).type == "goal"):
+                    if not (self.grid.get(*self.agents[i].pos).type in ["goal", "door"]):
                         self.grid.set(*self.agents[i].pos, None)
                     self.agents[i].pos = fwd_pos
                 self._handle_special_moves(i, rewards, fwd_pos, fwd_cell)
@@ -407,7 +410,7 @@ class MultiGridEnv(gymnasium.Env):
                 self._handle_pickup(i, rewards, fwd_pos, fwd_cell)
 
             # Drop an object
-            elif actions[i] == self.actions.drop:
+            elif "drop" in self.actions.available and actions[i] == self.actions.drop:
                 self._handle_drop(i, rewards, fwd_pos, fwd_cell)
 
             # Toggle/activate an object
@@ -416,11 +419,11 @@ class MultiGridEnv(gymnasium.Env):
                     fwd_cell.toggle(self, i, fwd_pos)
 
             # Done action (not used by default)
-            elif actions[i] == self.actions.done:
+            elif "done" in self.actions.available and actions[i] == self.actions.done:
                 pass
-
             else:
-                assert False, "unknown action"
+                raise ValueError(f"Invalid action {actions[i]}")
+
 
         if self.step_count >= self.max_steps:
             done = True
