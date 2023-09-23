@@ -7,7 +7,7 @@ from gym_multigrid.rendering import *
 from gym_multigrid.window import Window
 import numpy as np
 
-from gym_multigrid.world_objects import Grid, COLOR_NAMES, TILE_PIXELS, World
+from gym_multigrid.world_objects import Grid, COLOR_NAMES, TILE_PIXELS, World, Door
 
 
 class MultiGridEnv(gymnasium.Env):
@@ -112,6 +112,9 @@ class MultiGridEnv(gymnasium.Env):
         # To keep the same grid for each episode, call env.seed() with
         # the same seed before calling env.reset()
         self._gen_grid(self.width, self.height)
+
+        # check existance 1 door
+        assert any([isinstance(o, Door) for o in self.grid.grid]), "No door in the grid"
 
         # These fields should be defined by _gen_grid
         for a in self.agents:
@@ -394,7 +397,7 @@ class MultiGridEnv(gymnasium.Env):
                         self.agents[i].pos = fwd_pos
                 elif fwd_cell is None or fwd_cell.can_overlap():
                     self.grid.set(*fwd_pos, self.agents[i])
-                    if not (self.grid.get(*self.agents[i].pos) is not None and self.grid.get(*self.agents[i].pos).type == "goal"):
+                    if not (self.grid.get(*self.agents[i].pos).type in ["goal", "door"]):
                         self.grid.set(*self.agents[i].pos, None)
                     self.agents[i].pos = fwd_pos
                 self._handle_special_moves(i, rewards, fwd_pos, fwd_cell)
