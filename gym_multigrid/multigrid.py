@@ -36,11 +36,14 @@ class MultiGridEnv(gymnasium.Env):
         agent_pov: bool = False,
         render_mode=None,
         screen_size: int = 480,
+        goal_terminates: bool=True
     ):
         self.agents = agents
 
         # Does the agents have partial or full observation?
         self.partial_obs = partial_obs
+
+        self.goal_terminates = goal_terminates
 
         # Can't set both grid_size and width/height
         if grid_size:
@@ -384,7 +387,8 @@ class MultiGridEnv(gymnasium.Env):
                     # check if the agent is entering its own goal
                     if fwd_cell.type == "goal":
                         if fwd_cell.color == self.agents[i].color:
-                            done = True
+                            if self.goal_terminates:
+                                done = True
                             rewards[i] += self._reward(i, rewards, 1)
                         if fwd_cell.can_overlap():
                             #self.grid.set(*fwd_pos, self.agents[i])
