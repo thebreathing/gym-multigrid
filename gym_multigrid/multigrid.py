@@ -390,7 +390,7 @@ class MultiGridEnv(gymnasium.Env):
                             if self.goal_terminates:
                                 done = True
                             rewards[i] += self._reward(i, rewards, 1)
-                        if fwd_cell.can_overlap():
+                        elif fwd_cell.can_overlap():
                             #self.grid.set(*fwd_pos, self.agents[i])
                             self.grid.set(*self.agents[i].pos, None)
                             self.agents[i].pos = fwd_pos
@@ -401,7 +401,7 @@ class MultiGridEnv(gymnasium.Env):
                         self.agents[i].pos = fwd_pos
                 elif fwd_cell is None or fwd_cell.can_overlap():
                     self.grid.set(*fwd_pos, self.agents[i])
-                    if not (self.grid.get(*self.agents[i].pos).type in ["goal", "door"]):
+                    if self.grid.get(*self.agents[i].pos) and not (self.grid.get(*self.agents[i].pos).type in ["goal", "door"]):
                         self.grid.set(*self.agents[i].pos, None)
                     self.agents[i].pos = fwd_pos
                 self._handle_special_moves(i, rewards, fwd_pos, fwd_cell)
