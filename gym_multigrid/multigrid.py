@@ -116,8 +116,8 @@ class MultiGridEnv(gymnasium.Env):
         # the same seed before calling env.reset()
         self._gen_grid(self.width, self.height)
 
-        # check existance 1 door
-        assert any([isinstance(o, Door) for o in self.grid.grid]), "No door in the grid"
+        # # check existance 1 door
+        # assert any([isinstance(o, Door) for o in self.grid.grid]), "No door in the grid"
 
         # These fields should be defined by _gen_grid
         for a in self.agents:

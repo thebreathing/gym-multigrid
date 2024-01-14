@@ -1,4 +1,5 @@
 from gym_multigrid.multigrid import *
+from gym_multigrid.world_objects import *
 
 class SoccerGameEnv(MultiGridEnv):
     """
