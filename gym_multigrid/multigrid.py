@@ -15,7 +15,8 @@ class MultiGridEnv(gymnasium.Env):
     2D grid world game environment
     """
 
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
+    metadata = {"render_modes": ["human", "rgb_array"],"render_fps": 10,}
+
 
     # Enumeration of possible actions
 
@@ -34,7 +35,7 @@ class MultiGridEnv(gymnasium.Env):
         highlight: bool = False,
         tile_size: int = TILE_PIXELS,
         agent_pov: bool = False,
-        render_mode=None,
+        render_mode: str | None = None,
         screen_size: int = 480,
         goal_terminates: bool=True
     ):
@@ -135,13 +136,13 @@ class MultiGridEnv(gymnasium.Env):
         if self.partial_obs:
             obs = self.gen_obs()
         else:
-            obs = [
+            obs = np.array([
                 self.grid.encode_for_agents(
                     world=self.world, agent_pos=self.agents[i].pos
                 )
                 for i in range(len(self.agents))
-            ]
-        obs = [self.objects.normalize_obs * ob for ob in obs]
+            ])
+        obs = np.array([self.objects.normalize_obs * ob for ob in obs])
         info = {}
         return obs, info
 
@@ -486,12 +487,12 @@ class MultiGridEnv(gymnasium.Env):
         grids, vis_masks = self.gen_obs_grid()
 
         # Encode the partially observable view into a numpy array
-        obs = [
+        obs = np.array([
             grid.encode_for_agents(
                 self.objects, [grid.width // 2, grid.height - 1], vis_mask
             )
             for grid, vis_mask in zip(grids, vis_masks)
-        ]
+        ])
 
         return obs
 

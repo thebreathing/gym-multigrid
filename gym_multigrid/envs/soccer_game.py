@@ -18,6 +18,7 @@ class SoccerGameEnv(MultiGridEnv):
         agents_index = [],
         balls_index=[],
         zero_sum = False,
+        render_mode: str | None = None,
 
     ):
         self.num_balls = num_balls
@@ -40,6 +41,7 @@ class SoccerGameEnv(MultiGridEnv):
             # Set this to True for maximum speed
             see_through_walls=False,
             agents=agents,
+            render_mode=render_mode,
             agent_view_size=view_size
         )
 
@@ -107,7 +109,7 @@ class SoccerGameEnv(MultiGridEnv):
 
 
 class SoccerGame4HEnv10x15N2(SoccerGameEnv):
-    def __init__(self):
+    def __init__(self, render_mode: str | None = None,):
         super().__init__(size=None,
         height=10,
         width=15,
@@ -116,4 +118,5 @@ class SoccerGame4HEnv10x15N2(SoccerGameEnv):
         num_balls=[1],
         agents_index = [1,1,2,2],
         balls_index=[0],
+        render_mode=render_mode,
         zero_sum=True)

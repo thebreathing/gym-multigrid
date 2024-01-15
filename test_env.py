@@ -10,19 +10,12 @@ args = parser.parse_args()
 
 def main():
 
-    if args.env == 'soccer':
-        register(
-            id='multigrid-Soccer-v0',
-            entry_point='gym_multigrid.envs:SoccerGame4HEnv10x15N2',
-        )
-        env = gym.make('multigrid-Soccer-v0')
+    register(
+        id='multigrid-Soccer-v0',
+        entry_point='gym_multigrid.envs:SoccerGame4HEnv10x15N2',
+    )
+    env = gym.make('multigrid-Soccer-v0',render_mode="human")
 
-    else:
-        register(
-            id='multigrid-collect-v0',
-            entry_point='gym_multigrid.envs:CollectGame4HEnv10x10N2',
-        )
-        env = gym.make('multigrid-collect-v0')
 
     _ = env.reset()
 
