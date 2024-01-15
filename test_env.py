@@ -22,13 +22,11 @@ def main():
     nb_agents = len(env.agents)
 
     while True:
+        startTime= time.time()
         env.render()
-        time.sleep(0.1)
-
         ac = [env.action_space.sample() for _ in range(nb_agents)]
 
         obs, _, done, _, _ = env.step(ac)
-
         if done:
             break
 
